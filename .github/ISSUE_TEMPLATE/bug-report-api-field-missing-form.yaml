@@ -1,0 +1,144 @@
+name: "🐛 Bug Report: API Field Missing"
+description: Report a problem where existing API Endpoints have missing fields but available in Highlevel UI
+title: "[Bug Report: API Field Missing] "
+labels: ["bug-missing-api-field"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for reporting missing API fields!
+        
+        Please fill out the information below to help us address the missing field issue quickly.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🐛 Describe the Bug
+      description: A clear and concise description of what the bug is.
+      placeholder: The API endpoint is missing field X which is available in the Highlevel UI...
+    validations:
+      required: true
+
+  - type: input
+    id: api-endpoint
+    attributes:
+      label: 📍 API Endpoint
+      description: Which API endpoint does this relate to?
+      placeholder: e.g., /api/v2/users/{id}
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ Expected Behavior
+      description: What should have happened?
+      placeholder: The API should return field X with value Y...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code-samples
+    attributes:
+      label: 💻 Screenshots or Code Samples
+      description: Paste relevant markdown/code samples or screenshots.
+      placeholder: |
+        ```json
+        {
+          "missing_field": "should_be_here"
+        }
+        ```
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: product-area
+    attributes:
+      label: Product Area
+      description: Which product area does this issue relate to?
+      options:
+        - ad-publishing
+        - blogs
+        - bulk-actions
+        - calendars
+        - certificates
+        - client-portal
+        - communities
+        - contacts
+        - conversations
+        - conversations-ai
+        - custom-objects
+        - emails
+        - forms
+        - funnels
+        - gokollab
+        - integrations
+        - launchpad
+        - lc-email
+        - lc-phone
+        - lc-phone-sms
+        - lc-phone-voice
+        - lc-whatsapp
+        - marketplace
+        - marketplace-modules
+        - membership
+        - notifications
+        - onboarding
+        - opportunities
+        - payment-products
+        - payments
+        - proposals
+        - prospecting
+        - reporting
+        - reputation
+        - reselling
+        - saas
+        - snapshots
+        - social-planner
+        - media-library
+        - surveys
+        - templates
+        - text
+        - users
+        - voice
+        - wordpress
+        - workflows
+        - yext
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: 📋 Use Case
+      description: Please describe your specific use case for this field. How would you use it in your application?
+      placeholder: |
+        We need this field to:
+        - Track user preferences in our system
+        - Display this information in our dashboard
+        - Make decisions based on this data
+    validations:
+      required: true
+
+  - type: textarea
+    id: priority-justification
+    attributes:
+      label: 🚨 Why Should This Be Prioritized?
+      description: Please explain the impact of this issue on your business/operations and why it should be addressed urgently.
+      placeholder: |
+        This should be prioritized because:
+        - It's blocking our ability to...
+        - X number of our customers are affected...
+        - We're losing revenue/productivity due to...
+        - This prevents us from launching/implementing...
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 🧠 Additional Context
+      description: Any other helpful information?
+      placeholder: This field is also missing in other related endpoints...
+    validations:
+      required: false 

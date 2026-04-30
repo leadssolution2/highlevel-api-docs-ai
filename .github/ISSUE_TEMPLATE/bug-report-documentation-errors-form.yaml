@@ -1,0 +1,144 @@
+name: "🐛 Bug Report: Documentation Errors"
+description: Report a problem with only the existing documentation inconsistencies in Highlevel APIs
+title: "[Bug Report: Documentation Errors] "
+labels: ["bug-documentation-errors"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for reporting documentation errors in our API!
+        
+        Please fill out the information below to help us address the issue quickly.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🐛 Describe the Bug
+      description: A clear and concise description of what the bug is.
+      placeholder: The documentation for endpoint X says Y but it should be Z...
+    validations:
+      required: true
+
+  - type: input
+    id: api-endpoint
+    attributes:
+      label: 📍 API Endpoint
+      description: Which API endpoint does this relate to?
+      placeholder: e.g., /api/v2/users/{id}
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ Expected Behavior
+      description: What should have happened?
+      placeholder: The documentation should state that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code-samples
+    attributes:
+      label: 💻 Screenshots or Code Samples
+      description: Paste relevant markdown/code samples or screenshots.
+      placeholder: |
+        ```json
+        {
+          "example": "code here"
+        }
+        ```
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: product-area
+    attributes:
+      label: Product Area
+      description: Which product area does this issue relate to?
+      options:
+        - ad-publishing
+        - blogs
+        - bulk-actions
+        - calendars
+        - certificates
+        - client-portal
+        - communities
+        - contacts
+        - conversations
+        - conversations-ai
+        - custom-objects
+        - emails
+        - forms
+        - funnels
+        - gokollab
+        - integrations
+        - launchpad
+        - lc-email
+        - lc-phone
+        - lc-phone-sms
+        - lc-phone-voice
+        - lc-whatsapp
+        - marketplace
+        - marketplace-modules
+        - membership
+        - notifications
+        - onboarding
+        - opportunities
+        - payment-products
+        - payments
+        - proposals
+        - prospecting
+        - reporting
+        - reputation
+        - reselling
+        - saas
+        - snapshots
+        - social-planner
+        - media-library
+        - surveys
+        - templates
+        - text
+        - users
+        - voice
+        - wordpress
+        - workflows
+        - yext
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: 📋 Use Case
+      description: Please describe your specific use case for this documentation. How are you trying to use this feature?
+      placeholder: |
+        I'm trying to:
+        - Implement this feature in my application
+        - Understand how to use this API correctly
+        - Follow the documentation to achieve a specific goal
+    validations:
+      required: true
+
+  - type: textarea
+    id: priority-justification
+    attributes:
+      label: 🚨 Why Should This Be Prioritized?
+      description: Please explain how this documentation issue impacts your work and why it should be addressed urgently.
+      placeholder: |
+        This should be prioritized because:
+        - It's preventing our team from...
+        - Developers are wasting time trying to...
+        - We can't properly implement...
+        - This confusion is causing errors in production...
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 🧠 Additional Context
+      description: Any other helpful information?
+      placeholder: This issue also affects other endpoints...
+    validations:
+      required: false 

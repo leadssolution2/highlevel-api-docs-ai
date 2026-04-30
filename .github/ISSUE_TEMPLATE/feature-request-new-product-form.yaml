@@ -1,0 +1,130 @@
+name: "🌟 Feature Request: New Product"
+description: Suggest a new feature or documentation improvement
+title: "[Feature New Product] "
+labels: ["feature-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for suggesting a new product feature!
+        
+        Please fill out the information below to help us understand your feature request.
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: 🌟 Describe the Feature
+      description: A clear and concise description of the proposed improvement.
+      placeholder: I would like to see a new product feature that can...
+    validations:
+      required: true
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: 🚀 Justification
+      description: Why would this be useful for other developers?
+      placeholder: This would help users by...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestions
+    attributes:
+      label: 📝 Suggestions
+      description: If applicable, include ideas or mockups of the improvement.
+      placeholder: Here are some mockups or ideas for how this could work...
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: product-area
+    attributes:
+      label: Product Area
+      description: Which product area would this new feature relate to?
+      options:
+        - ad-publishing
+        - blogs
+        - bulk-actions
+        - calendars
+        - certificates
+        - client-portal
+        - communities
+        - contacts
+        - conversations
+        - conversations-ai
+        - custom-objects
+        - emails
+        - forms
+        - funnels
+        - gokollab
+        - integrations
+        - launchpad
+        - lc-email
+        - lc-phone
+        - lc-phone-sms
+        - lc-phone-voice
+        - lc-whatsapp
+        - marketplace
+        - marketplace-modules
+        - membership
+        - notifications
+        - onboarding
+        - opportunities
+        - payment-products
+        - payments
+        - proposals
+        - prospecting
+        - reporting
+        - reputation
+        - reselling
+        - saas
+        - snapshots
+        - social-planner
+        - media-library
+        - surveys
+        - templates
+        - text
+        - users
+        - voice
+        - wordpress
+        - workflows
+        - yext
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: 📋 Use Case
+      description: Please describe your specific use case for this new product feature. How would it benefit your workflow?
+      placeholder: |
+        This feature would help us:
+        - Streamline our process for X
+        - Better serve our customers by Y
+        - Save time and resources on Z
+    validations:
+      required: true
+
+  - type: textarea
+    id: priority-justification
+    attributes:
+      label: 🚨 Why Should This Be Prioritized?
+      description: Please explain the business impact of this feature and why it should be prioritized in the product roadmap.
+      placeholder: |
+        This should be prioritized because:
+        - It would improve user experience by...
+        - Our competitors already offer this and we're losing customers...
+        - This would reduce support tickets by...
+        - It aligns with our goal of...
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 🧠 Additional Context
+      description: Any other details you'd like to share?
+      placeholder: This feature would be especially useful for...
+    validations:
+      required: false 

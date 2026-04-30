@@ -1,0 +1,110 @@
+name: API Documentation Issue Processing
+
+on:
+  issues:
+    types: [opened]  # Only trigger on new issues
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to process (must be a valid positive number)'
+        required: true
+        type: number
+
+# Add concurrency to prevent race conditions
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.inputs.issue_number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  process-issue:
+    name: Process API Documentation Issue
+    runs-on: ubuntu-latest
+    # Only run on the API docs repository and non-internal issues
+    if: |
+      github.repository == 'GoHighLevel/highlevel-api-docs' &&
+      (github.event_name == 'workflow_dispatch' || !contains(github.event.issue.labels.*.name, 'internal'))
+    
+    permissions:
+      issues: write  # Required for issue labeling and commenting
+      contents: read # Required for checkout
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Check required secrets
+        run: |
+          if [ -z "${{ secrets.CLICKUP_API_TOKEN }}" ]; then
+            echo "CLICKUP_API_TOKEN is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.ONCALL_AUTH_TOKEN }}" ]; then
+            echo "ONCALL_AUTH_TOKEN is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.ONCALL_SERVICE_URL }}" ]; then
+            echo "ONCALL_SERVICE_URL is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.ONCALL_API_VERSION }}" ]; then
+            echo "ONCALL_API_VERSION is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SLACK_WEBHOOK_CRM }}" ]; then
+            echo "SLACK_WEBHOOK_CRM is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SLACK_WEBHOOK_AUTOMATIONS }}" ]; then
+            echo "SLACK_WEBHOOK_AUTOMATIONS is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SLACK_WEBHOOK_REVEX }}" ]; then
+            echo "SLACK_WEBHOOK_REVEX is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SLACK_WEBHOOK_LEADGEN }}" ]; then
+            echo "SLACK_WEBHOOK_LEADGEN is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SLACK_WEBHOOK_MOBILE }}" ]; then
+            echo "SLACK_WEBHOOK_MOBILE is not set"
+            exit 1
+          fi
+
+      - name: Install axios
+        run: npm install axios
+
+      - name: Process Issue and Create ClickUp Task
+        id: process
+        uses: actions/github-script@v7
+        env:
+          CLICKUP_API_TOKEN: ${{ secrets.CLICKUP_API_TOKEN }}
+          ONCALL_AUTH_TOKEN: ${{ secrets.ONCALL_AUTH_TOKEN }}
+          ONCALL_SERVICE_URL: ${{ secrets.ONCALL_SERVICE_URL }}
+          ONCALL_API_VERSION: ${{ secrets.ONCALL_API_VERSION }}
+          SLACK_WEBHOOK_CRM: ${{ secrets.SLACK_WEBHOOK_CRM }}
+          SLACK_WEBHOOK_AUTOMATIONS: ${{ secrets.SLACK_WEBHOOK_AUTOMATIONS }}
+          SLACK_WEBHOOK_REVEX: ${{ secrets.SLACK_WEBHOOK_REVEX }}
+          SLACK_WEBHOOK_LEADGEN: ${{ secrets.SLACK_WEBHOOK_LEADGEN }}
+          SLACK_WEBHOOK_MOBILE: ${{ secrets.SLACK_WEBHOOK_MOBILE }}
+        with:
+          debug: false
+          script: |
+            try {
+              const processIssue = require('./.github/process-issue.js');
+              if (context.eventName === 'workflow_dispatch') {
+                const issueNumber = context.payload?.inputs?.issue_number;
+                if (!issueNumber || Number(issueNumber) <= 0) {
+                  throw new Error('Please provide a valid positive issue number');
+                }
+              }
+              await processIssue(github, context, core);
+            } catch (error) {
+              core.setFailed(`Error processing issue: ${error.message}`);
+              throw error;
+            } 

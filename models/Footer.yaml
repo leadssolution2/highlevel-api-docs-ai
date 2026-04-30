@@ -1,0 +1,9 @@
+title: Footer
+x-stoplight:
+  id: l8nsxdtelley9
+type: object
+properties:
+  id:
+    type: string
+    x-stoplight:
+      id: 8kddyqi5h4wif

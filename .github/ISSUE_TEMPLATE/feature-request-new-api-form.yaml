@@ -1,0 +1,137 @@
+name: "🌟 Feature Request: New APIs"
+description: Suggest a new feature or documentation improvement
+title: "[Feature New API] "
+labels: ["feature-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for suggesting a new API feature!
+        
+        Please fill out the information below to help us understand your feature request.
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: 🌟 Describe the Feature
+      description: A clear and concise description of the proposed improvement.
+      placeholder: I would like to see an API endpoint that can...
+    validations:
+      required: true
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: 🚀 Justification
+      description: Why would this be useful for other developers?
+      placeholder: This would help developers by...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestions
+    attributes:
+      label: 📝 Suggestions
+      description: If applicable, include ideas or mockups of the improvement.
+      placeholder: |
+        ```json
+        {
+          "suggested_endpoint": "/api/v2/new-feature",
+          "method": "POST",
+          "response": "..."
+        }
+        ```
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: product-area
+    attributes:
+      label: Product Area
+      description: Which product area would this new API relate to?
+      options:
+        - ad-publishing
+        - blogs
+        - bulk-actions
+        - calendars
+        - certificates
+        - client-portal
+        - communities
+        - contacts
+        - conversations
+        - conversations-ai
+        - custom-objects
+        - emails
+        - forms
+        - funnels
+        - gokollab
+        - integrations
+        - launchpad
+        - lc-email
+        - lc-phone
+        - lc-phone-sms
+        - lc-phone-voice
+        - lc-whatsapp
+        - marketplace
+        - marketplace-modules
+        - membership
+        - notifications
+        - onboarding
+        - opportunities
+        - payment-products
+        - payments
+        - proposals
+        - prospecting
+        - reporting
+        - reputation
+        - reselling
+        - saas
+        - snapshots
+        - social-planner
+        - media-library
+        - surveys
+        - templates
+        - text
+        - users
+        - voice
+        - wordpress
+        - workflows
+        - yext
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: 📋 Use Case
+      description: Please describe your specific use case for this new API. How would you integrate it into your application?
+      placeholder: |
+        We need this API to:
+        - Enable our users to perform X
+        - Integrate with our existing workflow for Y
+        - Automate the process of Z
+    validations:
+      required: true
+
+  - type: textarea
+    id: priority-justification
+    attributes:
+      label: 🚨 Why Should This Be Prioritized?
+      description: Please explain the business value of this API and why it should be prioritized over other features.
+      placeholder: |
+        This should be prioritized because:
+        - It would unlock new capabilities for...
+        - We have X customers waiting for this feature...
+        - It would save us Y hours per week...
+        - Without this API, we cannot...
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 🧠 Additional Context
+      description: Any other details you'd like to share?
+      placeholder: This feature would integrate well with...
+    validations:
+      required: false 
