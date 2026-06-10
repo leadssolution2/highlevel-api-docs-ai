@@ -138,6 +138,12 @@ Per app, per resource (a "resource" = one Location, or one Company for Agency-le
 
 ---
 
+## 9b. Automation Workflows (the in-app builder, not the API)
+
+Building **workflow automations** (triggers/actions in the GHL builder UI, the Workflow AI "Build" mode, Custom Webhook retry patterns)? Read **`docs/automations/WORKFLOW-BUILDER-PLAYBOOK.md`** in this repo first. Highlights: drive the Workflow AI one node per message; its "Complete these steps" checklist is the designed human handoff; Custom Webhook saves `status` even on 4xx/5xx (branch `status Is 200` → success, everything else → bounded retry with a Counter field + native Math Operation); manual enrolls SKIP Custom Webhook actions; never ship an unbounded Go-To loop.
+
+---
+
 ## 10. External references (for the human, not for AI ingestion)
 
 - Developer Hub: https://developers.gohighlevel.com/
