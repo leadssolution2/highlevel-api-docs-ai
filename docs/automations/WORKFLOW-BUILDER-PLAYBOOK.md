@@ -77,3 +77,27 @@ Notes:
 - Keystrokes that miss an input land on the canvas as **hotkeys** (opens workflow switcher, shortcuts overlay, notes palette). Verify the caret is in the field, and verify text visibly arrived, before submitting anything.
 - Navigate by in-app clicks; deep URL navigation blanks the SPA. When a page wedges: refresh (F5), wait 10–20s, refresh again if needed.
 - Category drill-down dropdowns (field pickers) are flaky under synthetic clicks; the search box inside the picker, when present, is the reliable path.
+
+## 6. Reading GHL data without the browser — client-ops MCP (verified 2026-06-18)
+
+When you have the `mcp__client-ops__ghl_<account>` proxy, read live data instantly — no token dance, no iframe. Pass `{ghl_tool, arguments}` (arguments = a JSON string). Highest-value calls:
+- `opportunities_get-pipelines` → every pipeline + stages + IDs. (Answers "which pipeline do bookings land in," "why are there extra pipelines.")
+- `opportunities_search-opportunity {"location_id":"<id>","limit":10}` → opps with `pipelineId`, `pipelineStageId`, `source`, and `customFields`. Empty `customFields:[]` on a booking-created opp = the **blank-card problem** (fix in §7).
+- `locations_get-custom-fields {"model":"opportunity"}` → ⚠️ **the default returns model=contact**; you MUST pass `model:"opportunity"` to see opportunity fields + their `fieldKey`/`id`.
+- Also `opportunities_update-opportunity`, `contacts_*`, `calendars_get-calendar-events`. Responses can be huge and spill to a tool-results .txt with lines too long for line-based reads — `grep` it or python-slice `read()[A:B]`.
+- The proxy is READ + update for opps/contacts. It **cannot** create custom fields or edit workflow/pipeline internals — those stay UI-only.
+
+## 7. Map contact fields onto the opportunity card — the "blank booking" fix (verified 2026-06-18)
+
+A calendar booking auto-creates an opportunity, but it lands with **empty custom fields** — the card shows no service, no detail. Fix with a tiny published workflow:
+- **Trigger:** `Opportunity created` → add filter **In pipeline = <your pipeline>** (scopes it; harmless even if it also catches synced opps that lack the source fields — they just get blanks).
+- **Action:** `Update opportunity` → add a field row per opp custom field, value = `{{contact.<field>}}` (the value box takes literal merge syntax). **No Find Opportunity needed** — when an opportunity-type trigger is present, Update Opportunity updates the *triggering* opp (the action panel states this).
+- Publish (toggle Draft→Publish, then Save). Going forward every new opp in that pipeline carries the captured detail on its card. Pre-existing blank cards aren't backfilled (their contacts usually lack the values anyway).
+
+## 8. Calendar DEFAULT notifications live in a SECOND cross-origin iframe (verified 2026-06-18)
+
+Settings → Calendars → edit calendar → Advanced settings → **Notifications & policies** is a SEPARATE GHL surface from workflows, and it renders inside `calendar-app.leadconnectorhq.com` — cross-origin from the white-label parent. So parent-window JS / `find` / `read_page` see nothing and token-capture can't reach it: **coordinate clicks only.**
+- Notifications: Appointment booked (Unconfirmed / Confirmed), Cancellation, Reschedule, Reminder, Follow-Up. Each has **Email / In-app / SMS / WhatsApp** tabs and per-recipient bodies (Contact, Assigned user, Additional emails). Green channel badge = on.
+- **Edit an email body SAFELY (without shattering merge tags):** open the body toolbar's **`</>` source-code** button → in the plain-textarea, **double-click a unique word in your anchor line** (e.g. `meeting_location`), confirm the highlight with a `zoom`, press **Right ×3** (collapse selection + step past the `}}`), type your HTML (`<br><strong>Label:</strong> {{contact.field}}`), then the source modal **Save changes**. Append-only → all existing links/custom-values (`{{reschedule_link}}` etc.) are preserved. NEVER click mid-tag in the WYSIWYG — it breaks the tag.
+- Expand a recipient via its **chevron on the right** (clicking the label/row toggles the recipient checkbox instead). The **SMS tab opens Disabled** — toggle it on before the body is editable. Save the notification modal **and** the calendar's **top-right Save changes** (both persist).
+- 150% browser zoom materially improves coordinate-click precision on this surface. This is distinct from the Extendly **B-007 reminder workflows** (which fire off Appointment-status triggers and use HTML snippets) — a client may use either or both.
