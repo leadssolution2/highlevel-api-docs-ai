@@ -77,6 +77,9 @@ Notes:
 - Keystrokes that miss an input land on the canvas as **hotkeys** (opens workflow switcher, shortcuts overlay, notes palette). Verify the caret is in the field, and verify text visibly arrived, before submitting anything.
 - Navigate by in-app clicks; deep URL navigation blanks the SPA. When a page wedges: refresh (F5), wait 10–20s, refresh again if needed.
 - Category drill-down dropdowns (field pickers) are flaky under synthetic clicks; the search box inside the picker, when present, is the reliable path.
+- **No DOM/text shortcut for the canvas:** `get_page_text` sees only the top document and `read_page` (accessibility tree) returns nothing from the builder iframe — there is no text-extraction path for a large branching workflow; visual zoom-region reads of screenshots are the only way. Don't waste time trying them on the canvas.
+- **The select-all trap (cause of "stuck panel" loops):** a page-wide `Ctrl+A` selects the ENTIRE page, and the lingering select-all state breaks the next click/scroll so the node panel won't switch or close. Read a node from the screenshot (no Ctrl+A); to grab one truncated field verbatim, `triple_click` that single field → `Ctrl+C` → read clipboard.
+- **Read-only safety:** merely OPENING an email node sets the unsaved-changes flag → a discard-on-close dialog (never Save on a reference/pristine account). **SMS nodes don't dirty** — open them freely.
 
 ## 6. Reading GHL data without the browser — client-ops MCP (verified 2026-06-18)
 
@@ -101,3 +104,25 @@ Settings → Calendars → edit calendar → Advanced settings → **Notificatio
 - **Edit an email body SAFELY (without shattering merge tags):** open the body toolbar's **`</>` source-code** button → in the plain-textarea, **double-click a unique word in your anchor line** (e.g. `meeting_location`), confirm the highlight with a `zoom`, press **Right ×3** (collapse selection + step past the `}}`), type your HTML (`<br><strong>Label:</strong> {{contact.field}}`), then the source modal **Save changes**. Append-only → all existing links/custom-values (`{{reschedule_link}}` etc.) are preserved. NEVER click mid-tag in the WYSIWYG — it breaks the tag.
 - Expand a recipient via its **chevron on the right** (clicking the label/row toggles the recipient checkbox instead). The **SMS tab opens Disabled** — toggle it on before the body is editable. Save the notification modal **and** the calendar's **top-right Save changes** (both persist).
 - 150% browser zoom materially improves coordinate-click precision on this surface. This is distinct from the Extendly **B-007 reminder workflows** (which fire off Appointment-status triggers and use HTML snippets) — a client may use either or both.
+
+## 9. GHL REST API (PIT) — the precise read/write boundary (verified 2026-06-18)
+
+§6 covers the `client-ops` *proxy*. With a **Private Integration Token** (`Authorization: Bearer pit-…`, `services.leadconnectorhq.com`, `Version: 2021-07-28`) you call REST directly from a shell. Reads are reliable (workflows, custom values, pipelines, calendars, tags, location config). Writes are mixed — exact boundary:
+
+| Target | API write? | Notes |
+|---|---|---|
+| **Custom Values** | ✅ YES | `PUT /locations/{id}/customValues/{cvId}` — read-back confirms. |
+| **Custom Fields** | ✅ YES (create) | created intake fields via API. |
+| **Contacts** | ✅ write, ❌ search | `POST /contacts/` works (tags inline → fires tag triggers); `GET …/search` → 401 "not authorized for this scope". |
+| **Calendar `alertEmail`** | ✅ persists | — |
+| **Calendar owner / slug** | ❌ NO | only `alertEmail` takes; GHL "requires the calendar to have an owner first" → set in UI. |
+| **Email template BODY** | ❌ NO | API only lists/creates templates — content edits return *"this route is not yet supported by the IAM Service."* Edit body in the WYSIWYG builder. |
+| **Business Profile** | ❌ NO | PIT/agency token `GET` only; `PUT` → 401. UI-only. |
+| **Pipelines / workflow internals** | ❌ NO | UI-only. |
+
+- **⚠️ PIT is LOCATION-SCOPED → 403 cross-location.** A PIT for one sub-account can't read another — reference accounts must be read via the browser UI.
+- **⚠️ Image/file-type Custom Values silently no-op a plain-text PUT** — returns **200 but stays empty** on read-back (a `200 + empty read-back` = wrong value type, e.g. a logo CV is image-type).
+
+### Reading the live COPY via API (when you can't open every node)
+- **Email bodies — `previewUrl`:** `GET …/emails/builder` lists templates, each with a firebase-hosted **`previewUrl`** whose HTML is the verbatim rendered body (merge fields intact), curl-able with no browser. **Limits:** graphic-heavy templates were never rendered to firebase → **no `previewUrl`**; individual sub-templates aren't in the list (only a parent builder); the per-builder detail endpoint is out-of-scope for the PIT. For those, read the node panel.
+- **SMS bodies — the templates endpoint returns EMPTY:** `GET …/locations/{id}/templates?type=sms` comes back empty, yet every SMS send-node references a **named HTML-snippet template**. The snippet body is only readable in the node's panel preview (canvas-only); editing the snippet once updates every node that references it.
