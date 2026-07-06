@@ -70,6 +70,20 @@ curl -s "${H[@]}" ".../contacts/$CID/tasks"
 
 → Consequence: **tag-triggered campaigns can be driven AND tested end-to-end via API** (tag → enroll → force-step in UI → verify sends/tasks/opp-stage via API). Reply/DND branches are the only parts needing a human.
 
+## ⚠️ Merge-field fallbacks are HANDLEBARS — `||` is a PARSE ERROR (verified live 2026-07-03)
+
+GHL resolves merge fields with **Handlebars**. `{{contact.x || "default"}}` throws `Template Parser error … Expecting 'CLOSE_RAW_BLOCK'…` — the `||` OR-fallback does **not** exist in Handlebars. (Prior docs claiming `{{contact.field || "N/A"}}` works were never tested — it doesn't.)
+
+**Correct fallback = if/else block:**
+```
+{{#if contact.service_requested}}{{contact.service_requested}}{{else}}cleaning{{/if}}
+```
+Verified end-to-end: populated contact rendered "…your last Carpet Cleaning…", blank contact rendered "…your last cleaning…".
+
+**Free live template validator:** `POST /conversations/messages {type:"Email", contactId, subject, html:"<p>…{{merge}}…</p>"}` — GHL parses the Handlebars on send. Bad syntax → HTTP 400 with the exact parse error + caret; valid → sends, and you can read the *rendered* result in the recipient inbox. Use it to test any merge expression before committing it to a workflow/custom value.
+
+**Field-or-field** (`{{a || b}}`) is the same parse error → use `{{#if a}}{{a}}{{else}}{{b}}{{/if}}`. Any GHL automation currently using `||` (e.g. opp-relay "prefer form field, else AI field") is silently broken — audit and convert.
+
 ## UI-only (go to the browser knowingly, once, for exactly these)
 
 - Workflow **node trees / triggers / actions** — no public API (GET /workflows = metadata only)
